@@ -20,7 +20,7 @@ Additional Test Cases: <|insert test cases|>
 
 Additionally, if the solution script does not contain a comment stating the solution's time complexity and space complexity, DO NOT ADD IT YOURSELF. ASK THE USER TO PLEASE PROVIDE THIS INFORMATION TO YOU. 
 
-This is the format to follow when adding the comments: 
+This is the format to follow when adding the time and space complexity comments: 
 # Time complexity: O(n) - <|explanation|>
 # Space complexity: O(n) - <|explanation|>
 

@@ -2,9 +2,9 @@
 
 ## Description
 
-The purpose of this repository is to document my solutions to **NeetCode 150** and **LeetCode** problems.
+The purpose of this repository is to document my solutions to **NeetCode 150** and **LeetCode** problems. This repository should be useful for anyone trying to prepare software engineering coding interviews. The repository contains realistic solutions made by a real software engineer seeking to understand how to approach interview coding problems in a realistic time frame (most solutions were developed in 5 minutes to 1 hour).
 
-I want to record each solution script and make the repository as simple as possible. I want to allow people that look into the repository to debug their code if they want to try using my solution scripts.
+I want to record each solution script and make the repository as simple as possible. My goal is to share a repository where other people seeking to prepare for software engineering interview can observe and debug the code of my solutions scripts and test against them.
 
 ## Repository Structure
 
