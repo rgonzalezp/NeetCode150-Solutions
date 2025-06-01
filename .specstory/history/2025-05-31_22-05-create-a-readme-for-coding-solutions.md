@@ -2942,6 +2942,463 @@ _**Assistant**_
 
 ---
 
+I'll create the Merge Two Sorted Linked Lists solution following your repository rules. Since this is another linked list problem, I'll add it to the LinkedList_Problems directory.
+
+---
+
+```diff
+- 
++ from typing import Optional
++ 
++ # Definition for singly-linked list.
++ class ListNode:
++     def __init__(self, val=0, next=None):
++         self.val = val
++         self.next = next
++ 
++ # Time complexity O(n+m) for the size of each list because we have to go over both lists at worst. N is the size of the first list and M is the size of the second list
++ # Space O(n+m) because we are merging two lists. N is the size of the first list and M is the size of the second list
++ class Solution:
++     def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
++ 
++         head = None
++         l1 = list1
++         l2 = list2
++         
++         if l1 is None:
++             return l2
++         elif l2 is None:
++             return l1
++ 
++         if list1.val <= list2.val:
++             head = list1
++             if list1 is not None:
++                 l1 = list1.next
++         else:
++             head = list2
++             if list2 is not None:
++                 l2 = list2.next
++ 
++         
++ 
++         current = head
++         
++         while l1 is not None and l2 is not None:
++             if l1.val <= l2.val:
++                 current.next = l1
++                 current = current.next
++                 l1 = l1.next
++             else:
++                 current.next = l2
++                 current = current.next
++                 l2 = l2.next
++         
++         if l1 is None:
++             while l2 is not None:
++                 current.next = l2
++                 current = current.next
++                 l2 = l2.next
++         elif l2 is None:
++             while l1 is not None:
++                 current.next = l1
++                 current = current.next
++                 l1 = l1.next
++ 
++ 
++         return head
++ 
++ # Helper function to create linked list from array
++ def create_linked_list(arr):
++     if not arr:
++         return None
++     head = ListNode(arr[0])
++     current = head
++     for val in arr[1:]:
++         current.next = ListNode(val)
++         current = current.next
++     return head
++ 
++ # Helper function to convert linked list to array
++ def linked_list_to_array(head):
++     result = []
++     current = head
++     while current:
++         result.append(current.val)
++         current = current.next
++     return result
++ 
++ # Single test case for debugging
++ if __name__ == "__main__":
++     solution = Solution()
++     
++     # Test case for debugging
++     print("Testing Merge Two Sorted Linked Lists...")
++     print("=" * 40)
++     
++     # Test case 1: [1,2,4] and [1,3,5] -> [1,1,2,3,4,5]
++     list1_arr = [1, 2, 4]
++     list2_arr = [1, 3, 5]
++     
++     list1 = create_linked_list(list1_arr)
++     list2 = create_linked_list(list2_arr)
++     
++     print(f"Input: list1 = {list1_arr}, list2 = {list2_arr}")
++     
++     merged = solution.mergeTwoLists(list1, list2)
++     output_arr = linked_list_to_array(merged)
++     
++     print(f"Output: {output_arr}")
++     print(f"Expected: [1, 1, 2, 3, 4, 5]")
++     print(f"Verification: {'✓ Correct' if output_arr == [1, 1, 2, 3, 4, 5] else '✗ Incorrect'}") 
+```
+
+---
+
+```diff
+- 
++ from solution import Solution, ListNode, create_linked_list, linked_list_to_array
++ 
++ def test_merge_two_sorted_lists():
++     solution = Solution()
++     
++     print("Testing Merge Two Sorted Linked Lists Solution...")
++     print("=" * 50)
++     
++     # Test Case 1: Basic example [1,2,4] and [1,3,5] -> [1,1,2,3,4,5]
++     print("Test 1: Basic example [1,2,4] and [1,3,5]")
++     list1_1 = create_linked_list([1, 2, 4])
++     list2_1 = create_linked_list([1, 3, 5])
++     result1 = solution.mergeTwoLists(list1_1, list2_1)
++     output1 = linked_list_to_array(result1)
++     expected1 = [1, 1, 2, 3, 4, 5]
++     print(f"Input: list1 = [1,2,4], list2 = [1,3,5]")
++     print(f"Expected: {expected1}, Got: {output1}")
++     print(f"✓ Passed: {output1 == expected1}\n")
++     
++     # Test Case 2: One empty list [] and [1,2] -> [1,2]
++     print("Test 2: One empty list [] and [1,2]")
++     list1_2 = create_linked_list([])
++     list2_2 = create_linked_list([1, 2])
++     result2 = solution.mergeTwoLists(list1_2, list2_2)
++     output2 = linked_list_to_array(result2)
++     expected2 = [1, 2]
++     print(f"Input: list1 = [], list2 = [1,2]")
++     print(f"Expected: {expected2}, Got: {output2}")
++     print(f"✓ Passed: {output2 == expected2}\n")
++     
++     # Test Case 3: Both empty lists [] and [] -> []
++     print("Test 3: Both empty lists [] and []")
++     list1_3 = create_linked_list([])
++     list2_3 = create_linked_list([])
++     result3 = solution.mergeTwoLists(list1_3, list2_3)
++     output3 = linked_list_to_array(result3)
++     expected3 = []
++     print(f"Input: list1 = [], list2 = []")
++     print(f"Expected: {expected3}, Got: {output3}")
++     print(f"✓ Passed: {output3 == expected3}\n")
++     
++     # Test Case 4: [5] and [] -> [5]
++     print("Test 4: [5] and [] -> [5]")
++     list1_4 = create_linked_list([5])
++     list2_4 = create_linked_list([])
++     result4 = solution.mergeTwoLists(list1_4, list2_4)
++     output4 = linked_list_to_array(result4)
++     expected4 = [5]
++     print(f"Input: list1 = [5], list2 = []")
++     print(f"Expected: {expected4}, Got: {output4}")
++     print(f"✓ Passed: {output4 == expected4}\n")
++     
++     # Test Case 5: All elements from first list come first
++     print("Test 5: All elements from first list come first [1,2,3] and [4,5,6]")
++     list1_5 = create_linked_list([1, 2, 3])
++     list2_5 = create_linked_list([4, 5, 6])
++     result5 = solution.mergeTwoLists(list1_5, list2_5)
++     output5 = linked_list_to_array(result5)
++     expected5 = [1, 2, 3, 4, 5, 6]
++     print(f"Input: list1 = [1,2,3], list2 = [4,5,6]")
++     print(f"Expected: {expected5}, Got: {output5}")
++     print(f"✓ Passed: {output5 == expected5}\n")
++     
++     # Test Case 6: All elements from second list come first
++     print("Test 6: All elements from second list come first [4,5,6] and [1,2,3]")
++     list1_6 = create_linked_list([4, 5, 6])
++     list2_6 = create_linked_list([1, 2, 3])
++     result6 = solution.mergeTwoLists(list1_6, list2_6)
++     output6 = linked_list_to_array(result6)
++     expected6 = [1, 2, 3, 4, 5, 6]
++     print(f"Input: list1 = [4,5,6], list2 = [1,2,3]")
++     print(f"Expected: {expected6}, Got: {output6}")
++     print(f"✓ Passed: {output6 == expected6}\n")
++     
++     # Test Case 7: Single elements [1] and [2]
++     print("Test 7: Single elements [1] and [2]")
++     list1_7 = create_linked_list([1])
++     list2_7 = create_linked_list([2])
++     result7 = solution.mergeTwoLists(list1_7, list2_7)
++     output7 = linked_list_to_array(result7)
++     expected7 = [1, 2]
++     print(f"Input: list1 = [1], list2 = [2]")
++     print(f"Expected: {expected7}, Got: {output7}")
++     print(f"✓ Passed: {output7 == expected7}\n")
++     
++     # Test Case 8: Negative numbers [-10, -5, 0] and [-8, -3, 2]
++     print("Test 8: Negative numbers [-10,-5,0] and [-8,-3,2]")
++     list1_8 = create_linked_list([-10, -5, 0])
++     list2_8 = create_linked_list([-8, -3, 2])
++     result8 = solution.mergeTwoLists(list1_8, list2_8)
++     output8 = linked_list_to_array(result8)
++     expected8 = [-10, -8, -5, -3, 0, 2]
++     print(f"Input: list1 = [-10,-5,0], list2 = [-8,-3,2]")
++     print(f"Expected: {expected8}, Got: {output8}")
++     print(f"✓ Passed: {output8 == expected8}\n")
++     
++     # Test Case 9: Same values [1,3,5] and [1,3,5]
++     print("Test 9: Same values [1,3,5] and [1,3,5]")
++     list1_9 = create_linked_list([1, 3, 5])
++     list2_9 = create_linked_list([1, 3, 5])
++     result9 = solution.mergeTwoLists(list1_9, list2_9)
++     output9 = linked_list_to_array(result9)
++     expected9 = [1, 1, 3, 3, 5, 5]
++     print(f"Input: list1 = [1,3,5], list2 = [1,3,5]")
++     print(f"Expected: {expected9}, Got: {output9}")
++     print(f"✓ Passed: {output9 == expected9}\n")
++     
++     # Test Case 10: Boundary values [-100] and [100]
++     print("Test 10: Boundary values [-100] and [100]")
++     list1_10 = create_linked_list([-100])
++     list2_10 = create_linked_list([100])
++     result10 = solution.mergeTwoLists(list1_10, list2_10)
++     output10 = linked_list_to_array(result10)
++     expected10 = [-100, 100]
++     print(f"Input: list1 = [-100], list2 = [100]")
++     print(f"Expected: {expected10}, Got: {output10}")
++     print(f"✓ Passed: {output10 == expected10}\n")
++     
++     # Test Case 11: Different lengths [1,2,3,4,5] and [10,20]
++     print("Test 11: Different lengths [1,2,3,4,5] and [10,20]")
++     list1_11 = create_linked_list([1, 2, 3, 4, 5])
++     list2_11 = create_linked_list([10, 20])
++     result11 = solution.mergeTwoLists(list1_11, list2_11)
++     output11 = linked_list_to_array(result11)
++     expected11 = [1, 2, 3, 4, 5, 10, 20]
++     print(f"Input: list1 = [1,2,3,4,5], list2 = [10,20]")
++     print(f"Expected: {expected11}, Got: {output11}")
++     print(f"✓ Passed: {output11 == expected11}\n")
++     
++     print("All test cases completed!")
++ 
++ # Problem constraints for reference:
++ """
++ Merge Two Sorted Linked Lists Problem Constraints:
++ - 0 <= The length of each list <= 100
++ - -100 <= Node.val <= 100
++ - Both lists are sorted in non-decreasing order
++ """
++ 
++ if __name__ == "__main__":
++     test_merge_two_sorted_lists() 
+```
+
+---
+
+```diff
+- 
++ # Merge Two Sorted Linked Lists
++ 
++ ## Problem Description
++ 
++ You are given the heads of two sorted linked lists `list1` and `list2`.
++ 
++ Merge the two lists into one sorted linked list and return the head of the new sorted linked list.
++ 
++ The new list should be made up of nodes from `list1` and `list2`.
++ 
++ ## Examples
++ 
++ **Example 1:**
++ ```
++ Input: list1 = [1,2,4], list2 = [1,3,5]
++ Output: [1,1,2,3,4,5]
++ ```
++ 
++ **Example 2:**
++ ```
++ Input: list1 = [], list2 = [1,2]
++ Output: [1,2]
++ ```
++ 
++ **Example 3:**
++ ```
++ Input: list1 = [], list2 = []
++ Output: []
++ ```
++ 
++ ## Constraints
++ 
++ - `0 <= The length of each list <= 100`
++ - `-100 <= Node.val <= 100`
++ - Both `list1` and `list2` are sorted in **non-decreasing** order
++ 
++ ## Files
++ 
++ - `solution.py`: Contains the solution implementation with ListNode definition, helper functions, and debugging test case
++ - `test_cases.py`: Contains comprehensive test cases covering edge cases and boundary conditions
++ - `README.md`: This problem description
++ 
++ ## Usage
++ 
++ ```bash
++ # Debug the solution directly
++ python solution.py
++ 
++ # Run comprehensive test cases
++ python test_cases.py
++ ```
++ 
++ ## Implementation Notes
++ 
++ The solution includes helper functions:
++ - `create_linked_list(arr)`: Creates a linked list from an array for testing
++ - `linked_list_to_array(head)`: Converts a linked list back to an array for verification
++ 
++ The algorithm merges the two sorted lists by comparing values and connecting nodes appropriately.
++ 
++ ## LeetCode Link
++ 
++ [Merge Two Sorted Lists - LeetCode](https://leetcode.com/problems/merge-two-sorted-lists/) 
+```
+
+---
+
+Perfect! ✅ **Merge Two Sorted Linked Lists Solution Complete**
+
+Your Merge Two Sorted Linked Lists solution is now fully compliant with your repository rules:
+
+## ✅ **All Required Elements:**
+
+1. **✅ Time Complexity Comment**: Already included - `O(n+m)` for the size of each list because we have to go over both lists at worst
+2. **✅ Space Complexity Comment**: Already included - `O(n+m)` because we are merging two lists  
+3. **✅ Executable Solution**: Contains debugging test case with helper functions for testing
+4. **✅ Comprehensive Test Cases**: 11 test cases covering:
+   - Basic example from problem
+   - Edge cases (empty lists, single elements)
+   - Different ordering scenarios (first list smaller, second list smaller)
+   - Negative numbers and boundary values
+   - Same values and different length lists
+5. **✅ Problem Documentation**: Complete README with problem statement and usage
+
+## 📁 **Files Created:**
+
+- `LinkedList_Problems/mergeTwoSortedLists/solution.py` - Your merge solution with debugging and helper functions
+- `LinkedList_Problems/mergeTwoSortedLists/test_cases.py` - Comprehensive test cases
+- `LinkedList_Problems/mergeTwoSortedLists/README.md` - Problem description and documentation
+
+## 🎯 **Updated Repository Structure:**
+
+```
+├── Array_Problems/
+│   ├── two_sum/ ✅
+│   └── containsDuplicate/ ✅
+├── String_Problems/
+│   └── validAnagram/ ✅
+├── LinkedList_Problems/
+│   ├── reverseLinkedList/ ✅
+│   └── mergeTwoSortedLists/ ✅
+└── Stack_Problems/
+    └── minimumStack/ ✅
+```
+
+## 🚀 **Ready for Use:**
+
+Users can now:
+- Run `python solution.py` to debug with print statements and see the merge process
+- Run `python test_cases.py` to run comprehensive tests covering all edge cases
+- View the problem description and implementation notes in `README.md`
+
+Your complexity analysis is correct! The algorithm visits each node exactly once (O(n+m) time) and creates a new merged list structure (O(n+m) space).
+
+Your Merge Two Sorted Linked Lists solution is ready for debugging and testing! 🎯
+
+---
+
+_**User**_
+
+Problem: <|Evaluate Reverse Polish Notation
+Solved
+
+You are given an array of strings tokens that represents a valid arithmetic expression in Reverse Polish Notation.
+
+Return the integer that represents the evaluation of the expression.
+
+    The operands may be integers or the results of other operations.
+    The operators include '+', '-', '*', and '/'.
+    Assume that division between integers always truncates toward zero.
+
+Example 1:
+
+Input: tokens = ["1","2","+","3","*","4","-"]
+
+Output: 5
+
+Explanation: ((1 + 2) * 3) - 4 = 5
+
+Constraints:
+
+    1 <= tokens.length <= 1000.
+    tokens[i] is "+", "-", "*", or "/", or a string representing an integer in the range [-100, 100].
+|>
+
+Solution Script: <|class Solution:
+
+    # Time Complexity: O(N) where N is the number of tokens. Need to go through the entire list to process the operation
+    # Space Complexity: O(N) where N is the number of tokens. Although it may seem at first to be O(1), the stack can grow as the array of tokens grow even if it is up to half its size.
+    def evalRPN(self, tokens: List[str]) -> int:
+        numberStack = []
+
+        for token in tokens:
+
+            if token == '*':
+                o2 = numberStack.pop()
+                o1 = numberStack.pop()
+                res = o1 * o2
+                numberStack.append(res)
+            elif token == '-':
+                o2 = numberStack.pop()
+                o1 = numberStack.pop()
+                res = o1 - o2
+                numberStack.append(res)
+            elif token == '+':
+                o2 = numberStack.pop()
+                o1 = numberStack.pop()
+                res = o1 + o2
+                numberStack.append(res)
+            elif token == '/':
+                o2 = numberStack.pop()
+                o1 = numberStack.pop()
+                res = int(o1 / o2)
+                numberStack.append(res)
+            else:
+                numberStack.append(int(token))
+
+
+        return numberStack.pop()
+
+|>
+
+Additional Test Cases: <|insert_test_cases|>
+
+---
+
+_**Assistant**_
+
+
+
+---
+
+
+
+---
+
 
 
 ---
