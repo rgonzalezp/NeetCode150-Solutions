@@ -19,7 +19,7 @@ class TimeMap:
             self.mostRecentValue = value
             self.mostRecentTimeStamp = timestamp
         
-        self.data[key] = sorted(self.data[key], key = lambda item: item[1])
+
     
     ##Time complexity of get function is O(n) where N is equal to the size of the array we are exploring, at worst we need to go through all the values for the array with the corresponding key. O(1) space complexity, self explanatory. The reversed() function is an O(1) operation that creates an iterator object that knows how to loop backwards… it doesn't literally create a copy of the list reversed.
     
