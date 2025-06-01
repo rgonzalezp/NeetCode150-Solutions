@@ -1433,9 +1433,155 @@ _**Assistant**_
 
 ---
 
-
+Let me analyze your Valid Anagram solution to verify the time and space complexity.
 
 ---
+
+Read file: String_Problems/validAnagram/solution.py
+
+---
+
+Let me analyze your complexity step by step:
+
+## 🔍 **Time Complexity Analysis:**
+
+**✅ Time Complexity: O(N + M) is CORRECT**
+
+1. **Lines 8-12**: `O(N)` - iterate through string `s`
+2. **Lines 14-18**: `O(M)` - iterate through string `t` 
+3. **Lines 20-24**: `O(unique chars in s)` - iterate through dictionary keys
+4. **Lines 25-30**: `O(unique chars in t)` - iterate through dictionary keys
+
+Since we're dealing with lowercase English letters (26 max), the dictionary iterations are effectively `O(1)`.
+**Total: O(N + M + 1 + 1) = O(N + M)** ✅
+
+## 🤔 **Space Complexity Analysis:**
+
+**❌ Space Complexity: O(N + M) is INCORRECT**
+
+Here's where there's an important distinction:
+
+**Your analysis assumes general case, but the problem has a constraint!**
+
+From the problem constraints: **"s and t consist of lowercase English letters"**
+
+This means:
+- `my_dict_s` can store **at most 26 unique characters** (a-z)
+- `my_dict_t` can store **at most 26 unique characters** (a-z)
+
+**Correct Space Complexity: O(1)** - constant space since we can store at most 26 + 26 = 52 key-value pairs, regardless of input size.
+
+## 📝 **Corrected Comments:**
+
+---
+
+```diff
+  class Solution:
+      # Time complexity: O(N+M) - we need to go over all characters in both strings at least once. Additionally we go again over all keys of the dictionaries
+-     # Space complexity: O(N + M) - where N is the size in characters of the first string and M is the size in characters of the second string
++     # Space complexity: O(1) - at most 26 unique characters each in both dictionaries (lowercase English letters only)
+      def isAnagram(self, s: str, t: str) -> bool:
+          my_dict_s = {}
+```
+
+---
+
+## ✅ **Verification Complete:**
+
+- **Time Complexity: O(N + M)** ✅ **CORRECT**
+- **Space Complexity: O(1)** ✅ **CORRECTED** (was O(N + M))
+
+The key insight is that the problem constraint **"lowercase English letters only"** limits the space to at most 26 unique characters per dictionary, making it constant space regardless of input size.
+
+If the problem allowed any Unicode characters, then O(N + M) space would be correct, but with the given constraint, it's O(1). 🎯
+
+---
+
+_**User**_
+
+Problem: <|Time Based Key-Value Store
+Solved
+
+Implement a time-based key-value data structure that supports:
+
+    Storing multiple values for the same key at specified time stamps
+    Retrieving the key's value at a specified timestamp
+
+Implement the TimeMap class:
+
+    TimeMap() Initializes the object.
+    void set(String key, String value, int timestamp) Stores the key key with the value value at the given time timestamp.
+    String get(String key, int timestamp) Returns the most recent value of key if set was previously called on it and the most recent timestamp for that key prev_timestamp is less than or equal to the given timestamp (prev_timestamp <= timestamp). If there are no values, it returns "".
+
+Note: For all calls to set, the timestamps are in strictly increasing order.
+
+Example 1:
+
+Input:
+["TimeMap", "set", ["alice", "happy", 1], "get", ["alice", 1], "get", ["alice", 2], "set", ["alice", "sad", 3], "get", ["alice", 3]]
+
+Output:
+[null, null, "happy", "happy", null, "sad"]
+
+Explanation:
+TimeMap timeMap = new TimeMap();
+timeMap.set("alice", "happy", 1);  // store the key "alice" and value "happy" along with timestamp = 1.
+timeMap.get("alice", 1);           // return "happy"
+timeMap.get("alice", 2);           // return "happy", there is no value stored for timestamp 2, thus we return the value at timestamp 1.
+timeMap.set("alice", "sad", 3);    // store the key "alice" and value "sad" along with timestamp = 3.
+timeMap.get("alice", 3);           // return "sad"
+
+Constraints:
+
+    1 <= key.length, value.length <= 100
+    key and value only include lowercase English letters and digits.
+    1 <= timestamp <= 1000
+|>
+
+Solution Script: <|class TimeMap:
+
+    def __init__(self):
+        self.data = {}
+        self.mostRecentKey = None
+        self.mostRecentValue = None
+        self.mostRecentTimestamp = None
+    
+    #Time complexity of set function is O(nLogN) bounded by the sorting operation which is mandatory to maintain the expected order of the timestamps of the array. Insertion into the array is O(1) because we just append at the end of the list.
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        if key in self.data:
+            self.data[key].append((value,timestamp))
+            self.mostRecentKey = key
+            self.mostRecentValue = value
+            self.mostRecentTimeStamp = timestamp
+        else:
+            self.data[key] = [(value,timestamp)]
+            self.mostRecentKey = key
+            self.mostRecentValue = value
+            self.mostRecentTimeStamp = timestamp
+        
+        self.data[key] = sorted(self.data[key], key = lambda item: item[1])
+    
+    ##Time complexity of get function is O(n) where N is equal to the size of the array we are exploring, at worst we need to go through all the values for the array with the corresponding key. O(1) space complexity, self explanatory. The reversed() function is an O(1) operation that creates an iterator object that knows how to loop backwards… it doesn’t literally create a copy of the list reversed.
+    
+    def get(self, key: str, timestamp: int) -> str:
+        foundStamp = ""
+        
+        ## run in reverse and then return the first one that is lower.
+        if key in self.data:
+            for tuples in reversed(self.data[key]):
+                if tuples[1] <= timestamp:
+                    return tuples[0]
+        
+        return foundStamp
+
+        
+|>
+
+Additional Test Cases: <|insert test cases|>
+
+---
+
+_**Assistant**_
 
 
 

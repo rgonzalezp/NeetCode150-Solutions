@@ -22,8 +22,7 @@ Additionally, if the solution script does not contain a comment stating the solu
 
 This is the format to follow when adding the time and space complexity comments: 
 # Time complexity: O(n) - <|explanation|>
-# Space complexity: O(n) - <|explanation|>
+# Space complexity: O(n) - <|explanation|> 
 
 
-
-
+If the solution script does contain a comment stating the solution (or multiple functions) time complexity and space complexity, keep the words as close to the originals but clean up the formatting (use as reference other files if unsure).
