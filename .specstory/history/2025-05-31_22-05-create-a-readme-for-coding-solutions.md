@@ -1587,6 +1587,405 @@ _**Assistant**_
 
 ---
 
+I'll create the Time Based Key-Value Store solution following your repository rules. This appears to be a design problem, so I'll create a new category for it.
+
+---
+
+```diff
+- 
++ class TimeMap:
++ 
++     def __init__(self):
++         self.data = {}
++         self.mostRecentKey = None
++         self.mostRecentValue = None
++         self.mostRecentTimestamp = None
++     
++     #Time complexity of set function is O(nLogN) bounded by the sorting operation which is mandatory to maintain the expected order of the timestamps of the array. Insertion into the array is O(1) because we just append at the end of the list.
++     def set(self, key: str, value: str, timestamp: int) -> None:
++         if key in self.data:
++             self.data[key].append((value,timestamp))
++             self.mostRecentKey = key
++             self.mostRecentValue = value
++             self.mostRecentTimeStamp = timestamp
++         else:
++             self.data[key] = [(value,timestamp)]
++             self.mostRecentKey = key
++             self.mostRecentValue = value
++             self.mostRecentTimeStamp = timestamp
++         
++         self.data[key] = sorted(self.data[key], key = lambda item: item[1])
++     
++     ##Time complexity of get function is O(n) where N is equal to the size of the array we are exploring, at worst we need to go through all the values for the array with the corresponding key. O(1) space complexity, self explanatory. The reversed() function is an O(1) operation that creates an iterator object that knows how to loop backwards… it doesn't literally create a copy of the list reversed.
++     
++     def get(self, key: str, timestamp: int) -> str:
++         foundStamp = ""
++         
++         ## run in reverse and then return the first one that is lower.
++         if key in self.data:
++             for tuples in reversed(self.data[key]):
++                 if tuples[1] <= timestamp:
++                     return tuples[0]
++         
++         return foundStamp
++ 
++ # Single test case for debugging
++ if __name__ == "__main__":
++     timeMap = TimeMap()
++     
++     # Test case for debugging - Example from problem
++     print("Testing Time Based Key-Value Store...")
++     print("=" * 40)
++     
++     # Operations from the example
++     timeMap.set("alice", "happy", 1)
++     print("set('alice', 'happy', 1)")
++     
++     result1 = timeMap.get("alice", 1)
++     print(f"get('alice', 1) = '{result1}' (Expected: 'happy')")
++     
++     result2 = timeMap.get("alice", 2)
++     print(f"get('alice', 2) = '{result2}' (Expected: 'happy')")
++     
++     timeMap.set("alice", "sad", 3)
++     print("set('alice', 'sad', 3)")
++     
++     result3 = timeMap.get("alice", 3)
++     print(f"get('alice', 3) = '{result3}' (Expected: 'sad')")
++     
++     print("\nVerification:")
++     print(f"✓ Test 1: {result1 == 'happy'}")
++     print(f"✓ Test 2: {result2 == 'happy'}")
++     print(f"✓ Test 3: {result3 == 'sad'}") 
+```
+
+---
+
+```diff
+- 
++ from solution import TimeMap
++ 
++ def test_time_based_key_value_store():
++     print("Testing Time Based Key-Value Store Solution...")
++     print("=" * 50)
++     
++     # Test Case 1: Basic example from problem
++     print("Test 1: Basic example from problem")
++     timeMap1 = TimeMap()
++     timeMap1.set("alice", "happy", 1)
++     result1_1 = timeMap1.get("alice", 1)
++     result1_2 = timeMap1.get("alice", 2)
++     timeMap1.set("alice", "sad", 3)
++     result1_3 = timeMap1.get("alice", 3)
++     
++     expected1 = ["happy", "happy", "sad"]
++     actual1 = [result1_1, result1_2, result1_3]
++     print(f"Expected: {expected1}")
++     print(f"Actual: {actual1}")
++     print(f"✓ Passed: {actual1 == expected1}\n")
++     
++     # Test Case 2: Non-existent key
++     print("Test 2: Non-existent key")
++     timeMap2 = TimeMap()
++     result2 = timeMap2.get("nonexistent", 1)
++     expected2 = ""
++     print(f"get('nonexistent', 1) = '{result2}'")
++     print(f"Expected: '{expected2}'")
++     print(f"✓ Passed: {result2 == expected2}\n")
++     
++     # Test Case 3: Timestamp before any set operation
++     print("Test 3: Timestamp before any set operation")
++     timeMap3 = TimeMap()
++     timeMap3.set("key1", "value1", 5)
++     result3 = timeMap3.get("key1", 3)
++     expected3 = ""
++     print(f"set('key1', 'value1', 5) then get('key1', 3) = '{result3}'")
++     print(f"Expected: '{expected3}'")
++     print(f"✓ Passed: {result3 == expected3}\n")
++     
++     # Test Case 4: Multiple keys
++     print("Test 4: Multiple keys")
++     timeMap4 = TimeMap()
++     timeMap4.set("key1", "value1", 1)
++     timeMap4.set("key2", "value2", 2)
++     timeMap4.set("key1", "value3", 3)
++     
++     result4_1 = timeMap4.get("key1", 1)
++     result4_2 = timeMap4.get("key2", 2)
++     result4_3 = timeMap4.get("key1", 3)
++     result4_4 = timeMap4.get("key2", 3)
++     
++     expected4 = ["value1", "value2", "value3", "value2"]
++     actual4 = [result4_1, result4_2, result4_3, result4_4]
++     print(f"Expected: {expected4}")
++     print(f"Actual: {actual4}")
++     print(f"✓ Passed: {actual4 == expected4}\n")
++     
++     # Test Case 5: Same timestamp (edge case)
++     print("Test 5: Exact timestamp match")
++     timeMap5 = TimeMap()
++     timeMap5.set("exact", "match", 10)
++     result5 = timeMap5.get("exact", 10)
++     expected5 = "match"
++     print(f"set('exact', 'match', 10) then get('exact', 10) = '{result5}'")
++     print(f"Expected: '{expected5}'")
++     print(f"✓ Passed: {result5 == expected5}\n")
++     
++     # Test Case 6: Large timestamp values (boundary)
++     print("Test 6: Large timestamp values")
++     timeMap6 = TimeMap()
++     timeMap6.set("large", "value999", 999)
++     timeMap6.set("large", "value1000", 1000)
++     result6_1 = timeMap6.get("large", 999)
++     result6_2 = timeMap6.get("large", 1000)
++     
++     expected6 = ["value999", "value1000"]
++     actual6 = [result6_1, result6_2]
++     print(f"Expected: {expected6}")
++     print(f"Actual: {actual6}")
++     print(f"✓ Passed: {actual6 == expected6}\n")
++     
++     # Test Case 7: Sequential updates to same key
++     print("Test 7: Sequential updates to same key")
++     timeMap7 = TimeMap()
++     timeMap7.set("seq", "v1", 1)
++     timeMap7.set("seq", "v2", 2)
++     timeMap7.set("seq", "v3", 3)
++     timeMap7.set("seq", "v4", 4)
++     
++     result7_1 = timeMap7.get("seq", 1)
++     result7_2 = timeMap7.get("seq", 2)
++     result7_3 = timeMap7.get("seq", 3)
++     result7_4 = timeMap7.get("seq", 4)
++     result7_5 = timeMap7.get("seq", 5)  # Future timestamp
++     
++     expected7 = ["v1", "v2", "v3", "v4", "v4"]
++     actual7 = [result7_1, result7_2, result7_3, result7_4, result7_5]
++     print(f"Expected: {expected7}")
++     print(f"Actual: {actual7}")
++     print(f"✓ Passed: {actual7 == expected7}\n")
++     
++     # Test Case 8: Mixed operations with gaps
++     print("Test 8: Mixed operations with timestamp gaps")
++     timeMap8 = TimeMap()
++     timeMap8.set("gap", "start", 1)
++     timeMap8.set("gap", "middle", 50)
++     timeMap8.set("gap", "end", 100)
++     
++     result8_1 = timeMap8.get("gap", 25)   # Should get "start"
++     result8_2 = timeMap8.get("gap", 75)   # Should get "middle"
++     result8_3 = timeMap8.get("gap", 150)  # Should get "end"
++     
++     expected8 = ["start", "middle", "end"]
++     actual8 = [result8_1, result8_2, result8_3]
++     print(f"Expected: {expected8}")
++     print(f"Actual: {actual8}")
++     print(f"✓ Passed: {actual8 == expected8}\n")
++     
++     print("All test cases completed!")
++ 
++ # Problem constraints for reference:
++ """
++ Time Based Key-Value Store Problem Constraints:
++ - 1 <= key.length, value.length <= 100
++ - key and value only include lowercase English letters and digits
++ - 1 <= timestamp <= 1000
++ - For all calls to set, the timestamps are in strictly increasing order
++ """
++ 
++ if __name__ == "__main__":
++     test_time_based_key_value_store() 
+```
+
+---
+
+```diff
+- 
++ # Time Based Key-Value Store
++ 
++ ## Problem Description
++ 
++ Implement a time-based key-value data structure that supports:
++ 
++ - Storing multiple values for the same key at specified time stamps
++ - Retrieving the key's value at a specified timestamp
++ 
++ Implement the `TimeMap` class:
++ 
++ - `TimeMap()` Initializes the object.
++ - `void set(String key, String value, int timestamp)` Stores the key `key` with the value `value` at the given time `timestamp`.
++ - `String get(String key, int timestamp)` Returns the most recent value of `key` if `set` was previously called on it and the most recent timestamp for that key `prev_timestamp` is less than or equal to the given timestamp (`prev_timestamp <= timestamp`). If there are no values, it returns `""`.
++ 
++ **Note:** For all calls to `set`, the timestamps are in strictly increasing order.
++ 
++ ## Examples
++ 
++ **Example 1:**
++ ```
++ Input:
++ ["TimeMap", "set", ["alice", "happy", 1], "get", ["alice", 1], "get", ["alice", 2], "set", ["alice", "sad", 3], "get", ["alice", 3]]
++ 
++ Output:
++ [null, null, "happy", "happy", null, "sad"]
++ 
++ Explanation:
++ TimeMap timeMap = new TimeMap();
++ timeMap.set("alice", "happy", 1);  // store the key "alice" and value "happy" along with timestamp = 1.
++ timeMap.get("alice", 1);           // return "happy"
++ timeMap.get("alice", 2);           // return "happy", there is no value stored for timestamp 2, thus we return the value at timestamp 1.
++ timeMap.set("alice", "sad", 3);    // store the key "alice" and value "sad" along with timestamp = 3.
++ timeMap.get("alice", 3);           // return "sad"
++ ```
++ 
++ ## Constraints
++ 
++ - `1 <= key.length, value.length <= 100`
++ - `key` and `value` only include lowercase English letters and digits
++ - `1 <= timestamp <= 1000`
++ - For all calls to `set`, the timestamps are in strictly increasing order
++ 
++ ## Files
++ 
++ - `solution.py`: Contains the TimeMap class implementation with debugging test case
++ - `test_cases.py`: Contains comprehensive test cases covering edge cases and boundary conditions
++ - `README.md`: This problem description
++ 
++ ## Usage
++ 
++ ```bash
++ # Debug the solution directly
++ python solution.py
++ 
++ # Run comprehensive test cases
++ python test_cases.py
++ ```
++ 
++ ## LeetCode Link
++ 
++ [Time Based Key-Value Store - LeetCode](https://leetcode.com/problems/time-based-key-value-store/) 
+```
+
+---
+
+Perfect! ✅ **Time Based Key-Value Store Solution Complete**
+
+I've successfully created your solution following your repository rules. I noticed you already included time and space complexity comments in your code, which is great!
+
+## ✅ **All Required Elements:**
+
+1. **✅ Time Complexity Comments**: Already included in your solution
+   - `set()`: O(n log n) - bounded by sorting operation
+   - `get()`: O(n) - linear search through array + O(1) space
+2. **✅ Executable Solution**: Contains debugging test case with the example from the problem
+3. **✅ Comprehensive Test Cases**: 8 test cases covering:
+   - Basic example from problem
+   - Non-existent keys
+   - Timestamps before any set operations
+   - Multiple keys management
+   - Exact timestamp matches
+   - Boundary timestamp values (999, 1000)
+   - Sequential updates to same key
+   - Mixed operations with timestamp gaps
+4. **✅ Problem Documentation**: Complete README with problem statement and usage
+
+## 📁 **Files Created:**
+
+- `Design_Problems/timeBasedKeyValueStore/solution.py` - Your TimeMap class with debugging
+- `Design_Problems/timeBasedKeyValueStore/test_cases.py` - Comprehensive test cases
+- `Design_Problems/timeBasedKeyValueStore/README.md` - Problem description and documentation
+
+## 🎯 **Updated Repository Structure:**
+
+```
+├── Array_Problems/
+│   ├── two_sum/ ✅
+│   └── containsDuplicate/ ✅
+├── String_Problems/
+│   └── validAnagram/ ✅
+└── Design_Problems/
+    └── timeBasedKeyValueStore/ ✅
+```
+
+## 🔍 **Note on Implementation:**
+
+I noticed your solution sorts after each insertion, but since the problem states "timestamps are in strictly increasing order," you could optimize by simply appending without sorting (would make `set()` O(1) instead of O(n log n)).
+
+Your solution is ready for debugging and testing! Would you like to provide another problem or test this one? 🚀
+
+---
+
+_**User**_
+
+Problem: <|Reverse Linked List
+Solved
+
+Given the beginning of a singly linked list head, reverse the list, and return the new beginning of the list.
+
+Example 1:
+
+Input: head = [0,1,2,3]
+
+Output: [3,2,1,0]
+
+Example 2:
+
+Input: head = []
+
+Output: []
+
+Constraints:
+
+    0 <= The length of the list <= 1000.
+    -1000 <= Node.val <= 1000
+|>
+
+Solution Script: <|# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        
+        current = head
+        if current == None:
+            return head
+        nextObject = current
+        previousObject = None
+
+        while nextObject != None:
+
+            if current.next is not None:
+                nextObject = current.next
+                current.next = previousObject
+                previousObject = current
+                current = nextObject
+            else:
+                nextObject = None
+            
+        current.next = previousObject
+        return current
+|>
+
+Additional Test Cases: <|insert test cases|>
+
+---
+
+_**Assistant**_
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
 
 
 ---
