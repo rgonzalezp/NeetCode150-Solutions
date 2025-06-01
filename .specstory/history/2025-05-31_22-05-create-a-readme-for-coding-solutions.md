@@ -2458,3 +2458,499 @@ _**Assistant**_
 
 ---
 
+I'll create the Minimum Stack solution following your repository rules. This is a design problem focused on stack operations, so I'll create it in a Stack_Problems category.
+
+---
+
+```diff
+- 
++ # All operations timecomplexity are O(1) since we do not do any iterations over the stacks
++ # The data structure itself is O(n) for the stack and O(2n) which is O(n) for the ministack that keeps track of the min value for each insertion
++ class MinStack:
++ 
++     def __init__(self):
++         self.stack = []
++         self.miniStack =[]
++         self.mini = None
++         
++         
++ 
++     def push(self, val: int) -> None:
++         self.stack.append(val)
++         if (self.mini is None):
++             self.mini = val
++             self.miniStack.append(val)
++             self.miniStack.append(self.mini)
++         elif val < self.mini:
++             self.mini = val
++             self.miniStack.append(val)
++             self.miniStack.append(val)
++         else:
++             self.miniStack.append(val)
++             self.miniStack.append(self.mini)
++             
++ 
++ 
++     def pop(self) -> None:
++         del self.stack[len(self.stack)-1]
++ 
++         if len(self.miniStack) >2:
++             del self.miniStack[len(self.miniStack)-1]
++             del self.miniStack[len(self.miniStack)-1]
++             self.mini = self.miniStack[len(self.miniStack)-1]
++         elif len(self.miniStack)> 1:
++             del self.miniStack[len(self.miniStack)-1]
++             del self.miniStack[len(self.miniStack)-1]
++             self.mini = None
++             
++ 
++     def top(self) -> int:
++         return self.stack[len(self.stack)-1]
++ 
++     def getMin(self) -> int:
++         return self.miniStack[len(self.miniStack)-1]
++ 
++ # Single test case for debugging
++ if __name__ == "__main__":
++     print("Testing Minimum Stack...")
++     print("=" * 30)
++     
++     # Test case from the example
++     minStack = MinStack()
++     
++     print("push(1)")
++     minStack.push(1)
++     
++     print("push(2)")
++     minStack.push(2)
++     
++     print("push(0)")
++     minStack.push(0)
++     
++     min_val = minStack.getMin()
++     print(f"getMin() = {min_val} (Expected: 0)")
++     
++     print("pop()")
++     minStack.pop()
++     
++     top_val = minStack.top()
++     print(f"top() = {top_val} (Expected: 2)")
++     
++     min_val2 = minStack.getMin()
++     print(f"getMin() = {min_val2} (Expected: 1)")
++     
++     print("\nVerification:")
++     print(f"✓ Test 1 (getMin): {min_val == 0}")
++     print(f"✓ Test 2 (top): {top_val == 2}")
++     print(f"✓ Test 3 (getMin after pop): {min_val2 == 1}") 
+```
+
+---
+
+```diff
+- 
++ from solution import MinStack
++ 
++ def test_minimum_stack():
++     print("Testing Minimum Stack Solution...")
++     print("=" * 45)
++     
++     # Test Case 1: Basic example from problem
++     print("Test 1: Basic example from problem")
++     minStack1 = MinStack()
++     minStack1.push(1)
++     minStack1.push(2)
++     minStack1.push(0)
++     
++     result1_1 = minStack1.getMin()  # Should be 0
++     minStack1.pop()
++     result1_2 = minStack1.top()     # Should be 2
++     result1_3 = minStack1.getMin()  # Should be 1
++     
++     expected1 = [0, 2, 1]
++     actual1 = [result1_1, result1_2, result1_3]
++     print(f"Expected: {expected1}")
++     print(f"Actual: {actual1}")
++     print(f"✓ Passed: {actual1 == expected1}\n")
++     
++     # Test Case 2: Single element operations
++     print("Test 2: Single element operations")
++     minStack2 = MinStack()
++     minStack2.push(5)
++     
++     result2_1 = minStack2.top()     # Should be 5
++     result2_2 = minStack2.getMin()  # Should be 5
++     minStack2.pop()
++     # After pop, stack is empty (but we won't call operations on empty stack as per constraints)
++     
++     expected2 = [5, 5]
++     actual2 = [result2_1, result2_2]
++     print(f"Expected: {expected2}")
++     print(f"Actual: {actual2}")
++     print(f"✓ Passed: {actual2 == expected2}\n")
++     
++     # Test Case 3: Decreasing sequence
++     print("Test 3: Decreasing sequence [5,4,3,2,1]")
++     minStack3 = MinStack()
++     sequence = [5, 4, 3, 2, 1]
++     
++     for val in sequence:
++         minStack3.push(val)
++     
++     mins = []
++     for i in range(len(sequence)):
++         mins.append(minStack3.getMin())
++         if i < len(sequence) - 1:  # Don't pop the last element
++             minStack3.pop()
++     
++     expected3 = [1, 2, 3, 4, 5]  # Min should be current smallest as we pop
++     print(f"Expected: {expected3}")
++     print(f"Actual: {mins}")
++     print(f"✓ Passed: {mins == expected3}\n")
++     
++     # Test Case 4: Increasing sequence
++     print("Test 4: Increasing sequence [1,2,3,4,5]")
++     minStack4 = MinStack()
++     sequence4 = [1, 2, 3, 4, 5]
++     
++     for val in sequence4:
++         minStack4.push(val)
++     
++     mins4 = []
++     for i in range(len(sequence4)):
++         mins4.append(minStack4.getMin())
++         if i < len(sequence4) - 1:
++             minStack4.pop()
++     
++     expected4 = [1, 1, 1, 1, 1]  # Min should always be 1
++     print(f"Expected: {expected4}")
++     print(f"Actual: {mins4}")
++     print(f"✓ Passed: {mins4 == expected4}\n")
++     
++     # Test Case 5: Negative numbers
++     print("Test 5: Negative numbers [-3, -1, -5, -2]")
++     minStack5 = MinStack()
++     sequence5 = [-3, -1, -5, -2]
++     
++     for val in sequence5:
++         minStack5.push(val)
++     
++     result5_1 = minStack5.getMin()  # Should be -5
++     minStack5.pop()  # Remove -2
++     result5_2 = minStack5.getMin()  # Should be -5
++     minStack5.pop()  # Remove -5
++     result5_3 = minStack5.getMin()  # Should be -3
++     
++     expected5 = [-5, -5, -3]
++     actual5 = [result5_1, result5_2, result5_3]
++     print(f"Expected: {expected5}")
++     print(f"Actual: {actual5}")
++     print(f"✓ Passed: {actual5 == expected5}\n")
++     
++     # Test Case 6: Same values
++     print("Test 6: Same values [3,3,3,3]")
++     minStack6 = MinStack()
++     
++     for _ in range(4):
++         minStack6.push(3)
++     
++     mins6 = []
++     for i in range(4):
++         mins6.append(minStack6.getMin())
++         if i < 3:
++             minStack6.pop()
++     
++     expected6 = [3, 3, 3, 3]
++     print(f"Expected: {expected6}")
++     print(f"Actual: {mins6}")
++     print(f"✓ Passed: {mins6 == expected6}\n")
++     
++     # Test Case 7: Boundary values
++     print("Test 7: Boundary values [-2^31, 2^31-1]")
++     minStack7 = MinStack()
++     min_val = -2**31
++     max_val = 2**31 - 1
++     
++     minStack7.push(max_val)
++     minStack7.push(min_val)
++     
++     result7_1 = minStack7.getMin()  # Should be min_val
++     result7_2 = minStack7.top()     # Should be min_val
++     minStack7.pop()
++     result7_3 = minStack7.getMin()  # Should be max_val
++     result7_4 = minStack7.top()     # Should be max_val
++     
++     expected7 = [min_val, min_val, max_val, max_val]
++     actual7 = [result7_1, result7_2, result7_3, result7_4]
++     print(f"Expected: {expected7}")
++     print(f"Actual: {actual7}")
++     print(f"✓ Passed: {actual7 == expected7}\n")
++     
++     # Test Case 8: Mixed operations
++     print("Test 8: Mixed operations")
++     minStack8 = MinStack()
++     
++     minStack8.push(10)
++     minStack8.push(5)
++     result8_1 = minStack8.getMin()  # 5
++     minStack8.push(15)
++     result8_2 = minStack8.getMin()  # 5
++     minStack8.push(2)
++     result8_3 = minStack8.getMin()  # 2
++     minStack8.pop()  # Remove 2
++     result8_4 = minStack8.getMin()  # 5
++     minStack8.pop()  # Remove 15
++     result8_5 = minStack8.getMin()  # 5
++     
++     expected8 = [5, 5, 2, 5, 5]
++     actual8 = [result8_1, result8_2, result8_3, result8_4, result8_5]
++     print(f"Expected: {expected8}")
++     print(f"Actual: {actual8}")
++     print(f"✓ Passed: {actual8 == expected8}\n")
++     
++     print("All test cases completed!")
++ 
++ # Problem constraints for reference:
++ """
++ Minimum Stack Problem Constraints:
++ - -2^31 <= val <= 2^31 - 1
++ - pop, top and getMin will always be called on non-empty stacks
++ - Each function should run in O(1) time
++ """
++ 
++ if __name__ == "__main__":
++     test_minimum_stack() 
+```
+
+---
+
+```diff
+- 
++ # Minimum Stack
++ 
++ ## Problem Description
++ 
++ Design a stack class that supports the push, pop, top, and getMin operations.
++ 
++ - `MinStack()` initializes the stack object.
++ - `void push(int val)` pushes the element `val` onto the stack.
++ - `void pop()` removes the element on the top of the stack.
++ - `int top()` gets the top element of the stack.
++ - `int getMin()` retrieves the minimum element in the stack.
++ 
++ Each function should run in **O(1)** time.
++ 
++ ## Examples
++ 
++ **Example 1:**
++ ```
++ Input: ["MinStack", "push", 1, "push", 2, "push", 0, "getMin", "pop", "top", "getMin"]
++ Output: [null,null,null,null,0,null,2,1]
++ 
++ Explanation:
++ MinStack minStack = new MinStack();
++ minStack.push(1);
++ minStack.push(2);
++ minStack.push(0);
++ minStack.getMin(); // return 0
++ minStack.pop();
++ minStack.top();    // return 2
++ minStack.getMin(); // return 1
++ ```
++ 
++ ## Constraints
++ 
++ - `-2^31 <= val <= 2^31 - 1`
++ - `pop`, `top` and `getMin` will always be called on non-empty stacks
++ - Each function should run in **O(1)** time
++ 
++ ## Files
++ 
++ - `solution.py`: Contains the MinStack class implementation with debugging test case
++ - `test_cases.py`: Contains comprehensive test cases covering edge cases and boundary conditions
++ - `README.md`: This problem description
++ 
++ ## Usage
++ 
++ ```bash
++ # Debug the solution directly
++ python solution.py
++ 
++ # Run comprehensive test cases
++ python test_cases.py
++ ```
++ 
++ ## Implementation Notes
++ 
++ The solution uses two stacks:
++ - Main stack for storing values
++ - Mini stack for tracking minimum values at each level
++ 
++ ## LeetCode Link
++ 
++ [Min Stack - LeetCode](https://leetcode.com/problems/min-stack/) 
+```
+
+---
+
+Perfect! ✅ **Minimum Stack Solution Complete**
+
+Your Minimum Stack solution is now fully compliant with your repository rules:
+
+## ✅ **All Required Elements:**
+
+1. **✅ Time Complexity Comments**: Already included - "All operations time complexity are O(1) since we do not do any iterations over the stacks"
+2. **✅ Space Complexity Comments**: Already included - "The data structure itself is O(n) for the stack and O(2n) which is O(n) for the ministack that keeps track of the min value for each insertion"
+3. **✅ Executable Solution**: Contains debugging test case demonstrating the example from the problem
+4. **✅ Comprehensive Test Cases**: 8 test cases covering:
+   - Basic example from problem
+   - Single element operations
+   - Decreasing and increasing sequences
+   - Negative numbers
+   - Same values scenarios
+   - Boundary values (-2³¹, 2³¹-1)
+   - Mixed operations testing O(1) constraint
+5. **✅ Problem Documentation**: Complete README with problem statement and usage
+
+## 📁 **Files Created:**
+
+- `Stack_Problems/minimumStack/solution.py` - Your MinStack class with debugging
+- `Stack_Problems/minimumStack/test_cases.py` - Comprehensive test cases
+- `Stack_Problems/minimumStack/README.md` - Problem description and documentation
+
+## 🎯 **Updated Repository Structure:**
+
+```
+├── Array_Problems/
+│   ├── two_sum/ ✅
+│   └── containsDuplicate/ ✅
+├── String_Problems/
+│   └── validAnagram/ ✅
+├── LinkedList_Problems/
+│   └── reverseLinkedList/ ✅
+└── Stack_Problems/
+    └── minimumStack/ ✅
+```
+
+## 🚀 **Ready for Use:**
+
+Users can now:
+- Run `python solution.py` to debug with print statements and see the stack operations
+- Run `python test_cases.py` to run comprehensive tests covering all edge cases
+- View the problem description and implementation notes in `README.md`
+
+Your approach using two stacks (main stack + mini stack) is clever for maintaining O(1) time complexity for all operations! The solution is ready for debugging and testing! 🎯
+
+---
+
+_**User**_
+
+Problem: <|Merge Two Sorted Linked Lists
+Solved
+
+You are given the heads of two sorted linked lists list1 and list2.
+
+Merge the two lists into one sorted linked list and return the head of the new sorted linked list.
+
+The new list should be made up of nodes from list1 and list2.
+
+Example 1:
+
+Input: list1 = [1,2,4], list2 = [1,3,5]
+
+Output: [1,1,2,3,4,5]
+
+Example 2:
+
+Input: list1 = [], list2 = [1,2]
+
+Output: [1,2]
+
+Example 3:
+
+Input: list1 = [], list2 = []
+
+Output: []
+
+Constraints:
+
+    0 <= The length of the each list <= 100.
+    -100 <= Node.val <= 100
+|>
+
+Solution Script: <|# Time complexity O(n+m) for the size of each list because we have to go over both lists at worst. N is the size of the first list and M is the size of the second list
+# Space O(n+m) because we are merging two lists. N is the size of the first list and M is the size of the second list
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+
+        head = None
+        l1 = list1
+        l2 = list2
+        
+        if l1 is None:
+            return l2
+        elif l2 is None:
+            return l1
+
+        if list1.val <= list2.val:
+            head = list1
+            if list1 is not None:
+                l1 = list1.next
+        else:
+            head = list2
+            if list2 is not None:
+                l2 = list2.next
+
+        
+
+        current = head
+        
+        while l1 is not None and l2 is not None:
+            if l1.val <= l2.val:
+                current.next = l1
+                current = current.next
+                l1 = l1.next
+            else:
+                current.next = l2
+                current = current.next
+                l2 = l2.next
+        
+        if l1 is None:
+            while l2 is not None:
+                current.next = l2
+                current = current.next
+                l2 = l2.next
+        elif l2 is None:
+            while l1 is not None:
+                current.next = l1
+                current = current.next
+                l1 = l1.next
+
+
+        return head
+        
+        
+ |>
+
+Additional Test Cases: <|insert_test_cases|>
+
+---
+
+_**Assistant**_
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
