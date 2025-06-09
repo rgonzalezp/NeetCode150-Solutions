@@ -4797,3 +4797,414 @@ _**Assistant**_
 
 ---
 
+I'll create the Group Anagrams solution following your repository rules. This appears to be a string-related problem, so I'll add it to the String_Problems directory.
+
+---
+
+```diff
+- 
++ from typing import List
++ 
++ class Solution:
++     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
++         
++         resp = []
++ 
++         anagrams = {}
++ 
++         for i,string in enumerate(strs):
++             sorted_string = "".join(sorted(string))
++             if sorted_string in anagrams:
++                 anagrams[sorted_string].append(i)
++             else:
++                 anagrams[sorted_string] = [i]
++ 
++         for i in range(len(anagrams)):
++             resp.append([])
++ 
++         for i,anagramkey in enumerate(anagrams):
++             for indexes in anagrams[anagramkey]:
++                 resp[i].append(strs[indexes])
++                     
++         return resp
++ 
++ # Single test case for debugging
++ if __name__ == "__main__":
++     solution = Solution()
++     
++     # Test case for debugging
++     print("Testing Group Anagrams...")
++     print("=" * 30)
++     
++     # Test case 1: ["act","pots","tops","cat","stop","hat"]
++     strs = ["act","pots","tops","cat","stop","hat"]
++     result = solution.groupAnagrams(strs)
++     
++     print(f"Input: strs = {strs}")
++     print(f"Output: {result}")
++     expected = [["act", "cat"], ["pots", "tops", "stop"], ["hat"]]
++     print(f"Expected (one possible grouping): {expected}")
++     print(f"Note: Output order may vary as any order is acceptable")
++     
++     # Verify correctness by checking if each group contains anagrams
++     print("\nVerification:")
++     for i, group in enumerate(result):
++         if len(group) > 1:
++             sorted_chars = ["".join(sorted(word)) for word in group]
++             all_same = all(chars == sorted_chars[0] for chars in sorted_chars)
++             print(f"Group {i+1} {group}: {'✓ All anagrams' if all_same else '✗ Not all anagrams'}")
++         else:
++             print(f"Group {i+1} {group}: ✓ Single word group") 
+```
+
+---
+
+```diff
+- 
++ from solution import Solution
++ 
++ def verify_anagram_groups(result):
++     """Helper function to verify that each group contains only anagrams"""
++     for group in result:
++         if len(group) > 1:
++             # Check if all words in the group are anagrams
++             sorted_chars = ["".join(sorted(word)) for word in group]
++             if not all(chars == sorted_chars[0] for chars in sorted_chars):
++                 return False
++     return True
++ 
++ def test_group_anagrams():
++     solution = Solution()
++     
++     print("Testing Group Anagrams Solution...")
++     print("=" * 40)
++     
++     # Test Case 1: Basic example from problem
++     print("Test 1: Basic example [\"act\",\"pots\",\"tops\",\"cat\",\"stop\",\"hat\"]")
++     strs1 = ["act","pots","tops","cat","stop","hat"]
++     result1 = solution.groupAnagrams(strs1)
++     print(f"Input: {strs1}")
++     print(f"Output: {result1}")
++     print(f"✓ Passed: {verify_anagram_groups(result1) and len(result1) == 3}\n")
++     
++     # Test Case 2: Single string
++     print("Test 2: Single string [\"x\"]")
++     strs2 = ["x"]
++     result2 = solution.groupAnagrams(strs2)
++     expected2 = [["x"]]
++     print(f"Input: {strs2}")
++     print(f"Expected: {expected2}, Got: {result2}")
++     print(f"✓ Passed: {result2 == expected2}\n")
++     
++     # Test Case 3: Empty string
++     print("Test 3: Empty string [\"\"]")
++     strs3 = [""]
++     result3 = solution.groupAnagrams(strs3)
++     expected3 = [[""]]
++     print(f"Input: {strs3}")
++     print(f"Expected: {expected3}, Got: {result3}")
++     print(f"✓ Passed: {result3 == expected3}\n")
++     
++     # Test Case 4: All strings are anagrams
++     print("Test 4: All strings are anagrams [\"abc\",\"bca\",\"cab\"]")
++     strs4 = ["abc","bca","cab"]
++     result4 = solution.groupAnagrams(strs4)
++     print(f"Input: {strs4}")
++     print(f"Output: {result4}")
++     print(f"✓ Passed: {verify_anagram_groups(result4) and len(result4) == 1}\n")
++     
++     # Test Case 5: No anagrams (all unique)
++     print("Test 5: No anagrams [\"a\",\"b\",\"c\"]")
++     strs5 = ["a","b","c"]
++     result5 = solution.groupAnagrams(strs5)
++     print(f"Input: {strs5}")
++     print(f"Output: {result5}")
++     print(f"✓ Passed: {verify_anagram_groups(result5) and len(result5) == 3}\n")
++     
++     # Test Case 6: Mixed empty and non-empty strings
++     print("Test 6: Mixed empty and non-empty [\"\",\"a\",\"\"]")
++     strs6 = ["","a",""]
++     result6 = solution.groupAnagrams(strs6)
++     print(f"Input: {strs6}")
++     print(f"Output: {result6}")
++     print(f"✓ Passed: {verify_anagram_groups(result6) and len(result6) == 2}\n")
++     
++     # Test Case 7: Single character anagrams
++     print("Test 7: Single character anagrams [\"a\",\"a\",\"a\"]")
++     strs7 = ["a","a","a"]
++     result7 = solution.groupAnagrams(strs7)
++     print(f"Input: {strs7}")
++     print(f"Output: {result7}")
++     print(f"✓ Passed: {verify_anagram_groups(result7) and len(result7) == 1}\n")
++     
++     # Test Case 8: Different length strings
++     print("Test 8: Different length strings [\"ab\",\"ba\",\"abc\",\"bca\"]")
++     strs8 = ["ab","ba","abc","bca"]
++     result8 = solution.groupAnagrams(strs8)
++     print(f"Input: {strs8}")
++     print(f"Output: {result8}")
++     print(f"✓ Passed: {verify_anagram_groups(result8) and len(result8) == 2}\n")
++     
++     # Test Case 9: Longer anagrams
++     print("Test 9: Longer anagrams [\"listen\",\"silent\",\"hello\",\"world\"]")
++     strs9 = ["listen","silent","hello","world"]
++     result9 = solution.groupAnagrams(strs9)
++     print(f"Input: {strs9}")
++     print(f"Output: {result9}")
++     print(f"✓ Passed: {verify_anagram_groups(result9) and len(result9) == 3}\n")
++     
++     # Test Case 10: Repeated characters
++     print("Test 10: Repeated characters [\"aab\",\"aba\",\"baa\",\"ab\"]")
++     strs10 = ["aab","aba","baa","ab"]
++     result10 = solution.groupAnagrams(strs10)
++     print(f"Input: {strs10}")
++     print(f"Output: {result10}")
++     print(f"✓ Passed: {verify_anagram_groups(result10) and len(result10) == 2}\n")
++     
++     # Test Case 11: Case sensitivity (all lowercase as per constraints)
++     print("Test 11: All lowercase [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]")
++     strs11 = ["eat","tea","tan","ate","nat","bat"]
++     result11 = solution.groupAnagrams(strs11)
++     print(f"Input: {strs11}")
++     print(f"Output: {result11}")
++     print(f"✓ Passed: {verify_anagram_groups(result11) and len(result11) == 3}\n")
++     
++     # Test Case 12: Maximum length strings (boundary test)
++     print("Test 12: Boundary test with longer strings")
++     strs12 = ["abcdefghij","jihgfedcba","hello","olleh"]
++     result12 = solution.groupAnagrams(strs12)
++     print(f"Input: {strs12}")
++     print(f"Output: {result12}")
++     print(f"✓ Passed: {verify_anagram_groups(result12) and len(result12) == 3}\n")
++     
++     print("All test cases completed!")
++ 
++ # Problem constraints for reference:
++ """
++ Group Anagrams Problem Constraints:
++ - 1 <= strs.length <= 1000
++ - 0 <= strs[i].length <= 100
++ - strs[i] is made up of lowercase English letters
++ """
++ 
++ if __name__ == "__main__":
++     test_group_anagrams() 
+```
+
+---
+
+```diff
+- 
++ # Group Anagrams
++ 
++ ## Problem Description
++ 
++ Given an array of strings `strs`, group all anagrams together into sublists. You may return the output in any order.
++ 
++ An **anagram** is a string that contains the exact same characters as another string, but the order of the characters can be different.
++ 
++ ## Examples
++ 
++ **Example 1:**
++ ```
++ Input: strs = ["act","pots","tops","cat","stop","hat"]
++ Output: [["hat"],["act", "cat"],["stop", "pots", "tops"]]
++ ```
++ 
++ **Example 2:**
++ ```
++ Input: strs = ["x"]
++ Output: [["x"]]
++ ```
++ 
++ **Example 3:**
++ ```
++ Input: strs = [""]
++ Output: [[""]]
++ ```
++ 
++ ## Constraints
++ 
++ - `1 <= strs.length <= 1000`
++ - `0 <= strs[i].length <= 100`
++ - `strs[i]` is made up of lowercase English letters
++ 
++ ## Files
++ 
++ - `solution.py`: Contains the solution implementation with debugging test case
++ - `test_cases.py`: Contains comprehensive test cases covering edge cases and boundary conditions
++ - `README.md`: This problem description
++ 
++ ## Usage
++ 
++ ```bash
++ # Debug the solution directly
++ python solution.py
++ 
++ # Run comprehensive test cases
++ python test_cases.py
++ ```
++ 
++ ## Implementation Notes
++ 
++ The solution uses a hash map approach with sorted strings as keys:
++ 
++ 1. **Key Generation**: For each string, sort its characters to create a unique key for all anagrams
++ 2. **Grouping**: Use the sorted string as a dictionary key to group anagram indices
++ 3. **Result Building**: Construct the final result by collecting all strings for each anagram group
++ 
++ **Algorithm Steps:**
++ - Iterate through input strings
++ - Sort each string's characters to create anagram signature
++ - Group indices by their anagram signature
++ - Build result by collecting original strings for each group
++ 
++ **Note**: The output order may vary since "any order" is acceptable according to the problem statement.
++ 
++ ## Complexity Analysis
++ 
++ **Time Complexity**: O(N × M × log M) where:
++ - N = number of strings
++ - M = maximum length of a string
++ - log M factor comes from sorting each string
++ 
++ **Space Complexity**: O(N × M) for storing the hash map and result
++ 
++ ## Alternative Approaches
++ 
++ 1. **Character Count**: Instead of sorting, use character frequency as key (O(N × M) time)
++ 2. **Prime Number Mapping**: Assign prime numbers to each character and use product as key
++ 
++ ## LeetCode Link
++ 
++ [Group Anagrams - LeetCode](https://leetcode.com/problems/group-anagrams/) 
+```
+
+---
+
+Perfect! I've created the Group Anagrams solution following your repository rules. Here's what I've implemented:
+
+## **Group Anagrams** - String_Problems/groupAnagrams/
+
+### Files Created:
+
+1. **`solution.py`** - Contains your exact solution with:
+   - Added missing `from typing import List` import
+   - Single debugging test case with verification logic
+   - Note about output order variations (since any order is acceptable)
+
+2. **`test_cases.py`** - Comprehensive test suite with 12 test cases covering:
+   - Basic examples from the problem
+   - Edge cases (single string, empty string, all anagrams, no anagrams)
+   - Mixed scenarios (different lengths, repeated characters)
+   - Boundary conditions (longer strings, empty/non-empty mix)
+   - Helper function `verify_anagram_groups()` to validate correctness
+
+3. **`README.md`** - Complete problem documentation with:
+   - Detailed problem description and examples
+   - Implementation notes explaining the hash map approach
+   - Complexity analysis provided (since you didn't include complexity comments)
+   - Alternative approaches mentioned
+   - LeetCode link
+
+### Complexity Assessment:
+Since you didn't include time/space complexity comments in your solution, I've provided the analysis in the README:
+
+- **Time Complexity**: O(N × M × log M) - sorting each string dominates
+- **Space Complexity**: O(N × M) - for hash map and result storage
+
+Your solution uses a clever approach of sorting each string to create anagram signatures, then grouping by these signatures. The index-based approach allows you to maintain the original strings while efficiently grouping them.
+
+Would you like me to add time/space complexity comments to your solution file, or do you prefer to keep it as is?
+
+You can now run `python solution.py` to debug with the main example, or `python test_cases.py` to run the full test suite!
+
+---
+
+_**User**_
+
+Problem: <|Trapping Rain Water
+Solved
+
+You are given an array non-negative integers height which represent an elevation map. Each value height[i] represents the height of a bar, which has a width of 1.
+
+Return the maximum area of water that can be trapped between the bars.
+
+Example 1:
+
+Input: height = [0,2,0,3,1,0,1,3,2,1]
+
+Output: 9
+
+Constraints:
+
+    1 <= height.length <= 1000
+    0 <= height[i] <= 1000
+|>
+
+Solution Script: <|class Solution:
+    # Time Complexity: O(n) where n is the size of height. We just need to iterate the array 3 times at most to find the solution
+    # One time from left to right, one time from right to left, and one time to calculate the water trapped on each cel
+    # Space Complexity: O(n) where n is the size of height. We need to store n prefixes and n suffixes.
+    def trap(self, height: List[int]) -> int:
+
+        total = 0
+
+        suffix = [-1] * len(height)
+        preffix = [-1] * len(height)
+
+        # Prefix calculation
+        preffixTop = -1
+        for i,h in enumerate(height):
+            preffix[i] = preffixTop 
+            if(h > preffixTop):
+                preffixTop = h
+             
+
+        # Suffix calculation
+        suffixTop = -1
+        size = len(height)
+        for i,h in enumerate(reversed(height)):   
+            orig_i = size - 1 - i 
+            suffix[orig_i] = suffixTop 
+            if(h > suffixTop):
+                suffixTop = h
+            
+
+        for i in range(len(height)):
+ 
+            calc = min(suffix[i],preffix[i]) - height[i]
+
+            if calc > 0:
+                 total = calc + total
+
+        return total
+
+        |>
+
+Additional Test Cases: <|insert_test_cases|>
+
+---
+
+_**Assistant**_
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
